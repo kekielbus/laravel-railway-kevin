@@ -1,0 +1,27 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API de Tienda de Fútbol",
+        "version": "1.0"
+    },
+    "servers": [
+        {
+            "url": "http://127.0.0.1:8000",
+            "description": "Servidor local"
+        }
+    ],
+    "paths": {
+        "/api/camisetas": {
+            "get": {
+                "summary": "Lista de camisetas ",
+                "description": "Obtener todas las camisetas",
+                "operationId": "3b71dd6c6307537803637e59340a884c",
+                "responses": {
+                    "200": {
+                        "description": "Listado exitoso"
+                    }
+                }
+            }
+        }
+    }
+}

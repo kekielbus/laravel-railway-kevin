@@ -6,9 +6,33 @@ use App\Http\Controllers\Controller;
 use App\Models\Camiseta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use OpenApi\Annotations as OA;
+
+
+/**
+ * @OA\Info(title="API de Tienda de Fútbol", version="1.0")
+ * 
+ * @OA\Server(
+ *      url="http://127.0.0.1:8000",
+ *      description="Servidor local"
+ * )
+ */
 
 class CamisetaController extends Controller
 {
+  /**
+     * Obtener todas las camisetas
+     *
+     * @OA\Get(
+     *     path="/api/camisetas",
+     *     summary="Lista de camisetas ",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Listado exitoso"
+     *     )
+     * )
+     */
+    
     public function index(Request $request)
     {
         $query = Camiseta::query();
@@ -22,11 +46,11 @@ class CamisetaController extends Controller
         }
 
         if ($request->has('descripcion')) {
-            $query->where('descpricion', $request->descripcion);
+            $query->where('descripcion', $request->descripcion);
         }
 
         $camisetas = $query->get()->map(function ($camiseta) {
-            $camiseta->imagen = url($camiseta->imagen); // Agregar la URL completa de la imagen
+            $camiseta->imagen = url($camiseta->imagen); 
             return $camiseta;
         });
 
@@ -35,10 +59,10 @@ class CamisetaController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'nombre' => 'required|max:255',
-            'precio' => 'required',
-            'descripcion' => 'required|max:255',
-        ]);
+            'nombre' => 'sometimes|required|max:255',
+            'precio' => 'sometimes|required|numeric',
+            'descripcion' => 'sometimes|required|max:255'
+        ]);        
     
         if ($validator->fails()) {
             $data = [
@@ -51,8 +75,10 @@ class CamisetaController extends Controller
     
         $camisetaExistente = Camiseta::where('nombre', $request->nombre)->first();
         if ($camisetaExistente) {
-            return response()->json(['mensaje' => 'La camiseta ya existe', 'status' => 409]); // 409 Conflict
+            $camisetaExistente->update($request->all());
+            return response()->json(['mensaje' => 'Camiseta actualizada', 'status' => 200]);
         }
+        
     
         $camiseta = Camiseta::create([
             'nombre' => $request->nombre,
@@ -120,10 +146,10 @@ class CamisetaController extends Controller
             return response()->json($data, 404);
         }
         $validator = Validator::make($request->all(), [
-            'nombre' => 'required',
-            'precio' => 'required',
-            'descripcion' => 'required'
-        ]);
+            'nombre' => 'sometimes|required|max:255',
+            'precio' => 'sometimes|required|numeric',
+            'descripcion' => 'sometimes|required|max:255'
+        ]);        
         if ($validator->fails()) {
             $data = [
                 'mensaje' => 'Error en la validación',
@@ -155,10 +181,10 @@ class CamisetaController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'nombre' => 'required',
-            'precio' => 'required',
-            'descripcion' => 'required'
-        ]);
+            'nombre' => 'sometimes|required|max:255',
+            'precio' => 'sometimes|required|numeric',
+            'descripcion' => 'sometimes|required|max:255'
+        ]);        
         if ($validator->fails()) {
             $data = [
                 'mensaje' => 'Error en la validación',

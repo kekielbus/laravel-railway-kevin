@@ -19,6 +19,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        \L5Swagger\L5SwaggerServiceProvider::class;
     }
 }
