@@ -6,10 +6,6 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\CamisetaController;
 
 
-
-
-
-
 Route::get('/camisetas',[CamisetaController::class, 'index']);
 
 Route::get('/camisetas/{id}',[CamisetaController::class,'show']);

@@ -9,20 +9,35 @@ use Illuminate\Support\Facades\Validator;
 
 class CamisetaController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $camisetas = Camiseta::all()->map(function ($camiseta) {
-            $camiseta->imagen = url($camiseta->imagen); // Agrega la URL completa
+        $query = Camiseta::query();
+
+        if ($request->has('nombre')) {
+            $query->where('nombre', $request->nombre);
+        }
+
+        if ($request->has('precio')) {
+            $query->where('precio', $request->precio);
+        }
+
+        if ($request->has('descripcion')) {
+            $query->where('descpricion', $request->descripcion);
+        }
+
+        $camisetas = $query->get()->map(function ($camiseta) {
+            $camiseta->imagen = url($camiseta->imagen); // Agregar la URL completa de la imagen
             return $camiseta;
         });
-        return response()->json(Camiseta::all());
+
+        return response()->json($camisetas);
     }
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'nombre' => 'required|max:255',  // Corregido: comillas faltantes
-            'precio' => 'required',          // Corregido: comillas faltantes
-            'descripcion' => 'required|max:255', // Corregido: comillas faltantes
+            'nombre' => 'required|max:255',
+            'precio' => 'required',
+            'descripcion' => 'required|max:255',
         ]);
     
         if ($validator->fails()) {
@@ -32,6 +47,11 @@ class CamisetaController extends Controller
                 'status' => 400
             ];
             return response()->json($data, 400);
+        }
+    
+        $camisetaExistente = Camiseta::where('nombre', $request->nombre)->first();
+        if ($camisetaExistente) {
+            return response()->json(['mensaje' => 'La camiseta ya existe', 'status' => 409]); // 409 Conflict
         }
     
         $camiseta = Camiseta::create([
@@ -54,6 +74,7 @@ class CamisetaController extends Controller
         ];
         return response()->json($data, 201);
     }
+    
     public function show($id)
     {
         $camiseta = Camiseta::find($id);
