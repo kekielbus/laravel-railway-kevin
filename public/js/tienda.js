@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function() {
-    fetch('http://127.0.0.1:8000/api/camisetas')
+    fetch('https://laravel-railway-kevin-production-8838.up.railway.app/api/camisetas')
         .then(response => response.json())
         .then(data => {
             let contenedor = document.getElementById('productos');
